@@ -1,0 +1,34 @@
+import numpy as np
+from collections import Counter
+
+# Global function for calculating distance between the points
+def euclidean_distance(arr1 , arr2):
+    return np.sqrt(np.sum((arr1 - arr2)**2))
+
+class KNN:
+
+    # Init number of k we want
+    def __init__(self , k):
+        self.k = k
+
+    def fit(self , X , y):
+        self.X_train = X
+        self.y_train = y
+
+    def predict(self , X):
+        predictions = [self._predict(x) for x in X]
+        return predictions
+    
+    def _predict(self , x):
+
+        # compute distance
+        distance = [euclidean_distance(x , x_train) for x_train in self.X_train]
+
+        # get closest k
+        k_idx = np.argsort(distance)[:self.k]
+        k_nearest_labels = [self.y_train[i] for i in k_idx]
+
+        # majority vote
+        most_common = Counter(k_nearest_labels).most_common()
+        return most_common[0][0]
+    
